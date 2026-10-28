@@ -78,3 +78,13 @@ High-performance browser-based sandbox environment for rapid creative testing of
 
 - **Access Transformers**: N/A for frontend sandbox; mapped 1:1 to NeoForge equivalents during code export.
 - **Two-Way Sync Protocol**: Every successful sandbox iteration produces a validated Java code counterpart for seamless integration into the mod source tree.
+
+---
+
+### 5. Integration: Multi-Mode Sandbox & Structure Pipeline (`implementation_structure.md`)
+
+- **Expanded Scope**:
+  - **Three-Mode Architecture**: Integration of **First-Person Mode** (30x30 grass flat map, WASD, jump, crouch, 'E' inventory GUI, hotbar, right-click place, 1.5s left-click break without progress bars, shader-style look), **Orbit Mode** (standard AI Studio sidebars, camera controls, and `.nbt` structure selector with "LoadStructure" action), and **Tool Mode** (utility grid hiding 3D scene, featuring "ExportToNeoForge 1.21.1").
+  - **Mode Switching**: Instant toggling via the **TAB** key (default startup mode is First-Person).
+  - **Asset & Structure Bindings**: GUI textures mapped from `public/resources/assets/minecraft/textures/gui/...` and structure files loaded from `public/resources/data/minecraft/structure/...` via a frontend TypeScript NBT parser.
+  - **Directory Segregation**: Code structured strictly under `src-frontend/` (`first/`, `orbit/`, `tools/`).
