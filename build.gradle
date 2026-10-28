@@ -1,0 +1,122 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.gradle.userdev' version '7.1.38'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
+}
+
+group = "geni.witherutils"
+base {
+    archivesName = 'WitherUtils'
+}
+sourceSets.main.resources.srcDirs += "src/main/generated"
+
+mod_version = "${mod_version}"
+version = "${minecraft_version}-${mod_version}"
+println "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+println "XX: Starting build of ${base.archivesName.get()}, Version: ${mod_version}"
+println "XX: Using Neoforge: ${neo_version}, for Minecraft: ${minecraft_version}"
+println "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+minecraft {
+    accessTransformers.file file("src/main/resources/META-INF/accesstransformer.cfg")
+}
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        workingDirectory file('run')
+    }
+
+    client {
+        workingDirectory file('run')
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        workingDirectory file('run')
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        argument '--nogui'
+    }
+
+    data {
+        workingDirectory file('run')
+        arguments.addAll '--mod', 'witherutils', '--all', '--output', file("src/main/generated").absolutePath, '--existing', file("src/main/resources").absolutePath
+    }
+}
+
+configurations {
+}
+
+repositories {
+    maven { url = "https://chickenbones.net/maven" }
+    maven { url = "https://maven.blamejared.com/" }
+    maven { url = "https://dvs1.progwml6.com/files/maven" }
+    maven { url = "https://maven.cil.li/" }
+    maven { url = "https://api.modrinth.com/maven" }
+    maven { url = "https://maven.createmod.net" }
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url = 'https://www.cursemaven.com' }
+}
+
+dependencies
+{
+    implementation "net.neoforged:neoforge:${neo_version}"
+    implementation "io.codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}"
+    implementation("maven.modrinth:athena-ctm:4.0.6")
+
+    implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.9.3"
+    jarJar "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.9.3"
+
+    implementation("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}") {
+        transitive false
+    }
+
+    /*implementation files("libs/withercomps-${minecraft_version}-1.0.0.jar")
+    jarJar files("libs/withercomps-${minecraft_version}-1.0.0.jar")*/
+
+    //runtimeOnly "curse.maven:CTM-267602:5587515"
+    //implementation "net.createmod.ponder:ponder-neoforge:1.0.87+mc1.21.1"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+
+tasks.withType(JavaCompile).configureEach
+{
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
