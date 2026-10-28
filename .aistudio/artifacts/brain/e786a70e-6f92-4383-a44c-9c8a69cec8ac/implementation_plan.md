@@ -119,6 +119,7 @@ High-performance browser-based sandbox environment for rapid creative testing of
 ### FREQUENTLY OCCURRING ERRORS
 
 * THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+* Pointer lock cannot be acquired immediately after the user has exited the lock.
 
 ### IMPORTANT THREE.JS & REACT LIFECYCLE RULES FOR THE VOXEL ENGINE:
 

@@ -47,11 +47,12 @@ High-performance browser-based sandbox environment for rapid creative testing of
   - Contains standard mouse and keyboard controls: `WSAD` movement, Jump, Crouch, and `E` to open the Player Inventory featuring container GUIs and slot textures (`public\resources\assets\minecraft\textures\gui\...`).
   - Player Hotbar located at the bottom of the screen.
   - Visual styling targets a shader-like aesthetic look with a Day Skybox, right-click block placement, and a 1.5-second digging/breaking action when holding the left mouse button.
+  - Important! In this mode, there is no additional UI content. No menu bar, no text.
 
 - **2. Orbit-Modus (`src-frontend/orbit/`)**:
   - Shares the exact same 3D world scene as FirstPerson mode.
   - Camera allows smooth rotation, zooming, and panning around the scene.
-  - Features two collapsible sidebars with settings, calculations, notes, buttons, and AI Studio tooling.
+  - Has two toggle buttons in the menu bar near the title text. Clicking them displays a sidebar (with settings, calculations, notes, buttons, and AI Studio tooling) over the 3D scene, depending on the button (right or left). The sidebars are initially closed. Additionally, the scrollbars in the sidebars are color-coordinated with the rest of the design!
   - **Structure & Position Management**: 
     - Scrollable list of all `.nbt` structure files found in `public\resources\data\minecraft\structure\...`.
     - Includes **X, Y, Z coordinate adjustment inputs/sliders** to move/offset the loaded structure prior to gameplay to prevent height mismatches and player collision/stuck bugs.
