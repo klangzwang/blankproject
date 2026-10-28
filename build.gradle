@@ -1,3 +1,5 @@
+import witherutils.OptimizePng
+
 plugins {
     id 'java-library'
     id 'net.neoforged.gradle.userdev' version '7.1.38'
@@ -112,6 +114,22 @@ tasks.withType(ProcessResources).configureEach {
 tasks.withType(JavaCompile).configureEach
 {
     options.encoding = 'UTF-8'
+}
+
+tasks.register('optimizePng', OptimizePng) {
+    def pngPatterns = ['**/*.png']
+	
+	for (def dir : sourceSets.main.resources.srcDirs) {
+		inputFiles.from(fileTree(dir: dir, includes: pngPatterns))
+	}
+
+    notCompatibleWithConfigurationCache('Up to date check is not currently compatible with the configuration cache')
+    outputs.upToDateWhen {
+        //Validate that none of the files has changed size, as the odds that a file has the exact same size and has changed is very low for an image file
+        //Note: This is from Chat-GPT, I don't understand why the any check isn't just always true (and thus this being different from returning always false)
+        // but it seems to function properly(?), whereas just always returning false does not
+        !inputFiles.files.any { file -> file.length() != file.size() }
+    }
 }
 
 idea {
