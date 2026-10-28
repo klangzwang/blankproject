@@ -88,3 +88,23 @@ High-performance browser-based sandbox environment for rapid creative testing of
   - **Mode Switching**: Instant toggling via the **TAB** key (default startup mode is First-Person).
   - **Asset & Structure Bindings**: GUI textures mapped from `public/resources/assets/minecraft/textures/gui/...` and structure files loaded from `public/resources/data/minecraft/structure/...` via a frontend TypeScript NBT parser.
   - **Directory Segregation**: Code structured strictly under `src-frontend/` (`first/`, `orbit/`, `tools/`).
+  
+### RISK OF TYPICAL ERRORS
+
+- THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead. 
+
+### WICHTIGE THREE.JS & REACT LIFECYCLE-REGELN FÜR DIE VOXEL-ENGINE:
+
+1. Scene-Lifecycle & Entkopplung (Anti-Teardown):
+   - Der WebGLRenderer, die Three.js-Scene und der Animationsloop dürfen exakt EINMAL beim Mounten initialisiert werden (useEffect mit leerem Dependency-Array []).
+   - Dynamische UI-States (aktiver Hotbar-Slot, offenes Inventar, Tooltips, ausgewählte Items) dürfen NIEMALS im Dependency-Array des Scene-Effekts stehen und dürfen NIEMALS renderer.dispose() oder das Neuerstellen der Scene auslösen. Binde diese Werte im Loop/in Event-Handlern über `useRef` an.
+
+2. Garantierte Mesh-Synchronisation (Anti-Race-Condition):
+   - Stelle sicher, dass die Initial-Blöcke der Map (z.B. 30x30 Gras-Map) zwingend direkt nach der Scene-Erstellung im selben Setup-Block hinzugefügt werden.
+   - Trenne den Scene-Initialisierungs-Effekt und den Block-Sync-Effekt so, dass kein Mesh-Sync vor Fertigstellung von sceneRef.current ins Leere läuft.
+
+3. Korrekte Voxel-Kollision & Start-Perspektive:
+   - Minecraft-Blöcke auf Ebene y=0 spannen von y=0.0 bis y=1.0 (Oberkante).
+   - Die Bodenkollision der Füße muss auf der Oberkante liegen (y = 1.0, bzw. höchster Block darunter).
+   - Die Kamera (Augenhöhe 1.62) startet somit bei y = 2.62.
+   - Neige den Blickwinkel beim Spawn standardmäßig minimal nach unten (pitch = -0.15), damit der Boden sofort im Sichtfeld ist und nicht in den Horizont/Himmel starrt.
