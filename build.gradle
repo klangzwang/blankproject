@@ -24,10 +24,6 @@ sourceSets.main.resources.srcDirs += "src/main/generated"
 
 mod_version = "${mod_version}"
 version = "${minecraft_version}-${mod_version}"
-println "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-println "XX: Starting build of ${base.archivesName.get()}, Version: ${mod_version}"
-println "XX: Using Neoforge: ${neo_version}, for Minecraft: ${minecraft_version}"
-println "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 minecraft {
     accessTransformers.file file("src/main/resources/META-INF/accesstransformer.cfg")
@@ -110,19 +106,12 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-
-tasks.withType(JavaCompile).configureEach
-{
-    options.encoding = 'UTF-8'
-}
-
 tasks.register('optimizePng', OptimizePng) {
     def pngPatterns = ['**/*.png']
-	
 	for (def dir : sourceSets.main.resources.srcDirs) {
 		inputFiles.from(fileTree(dir: dir, includes: pngPatterns))
 	}
-
+    //TODO: Make optimize png be fully compatible with the configuration cache?
     notCompatibleWithConfigurationCache('Up to date check is not currently compatible with the configuration cache')
     outputs.upToDateWhen {
         //Validate that none of the files has changed size, as the odds that a file has the exact same size and has changed is very low for an image file
@@ -130,6 +119,11 @@ tasks.register('optimizePng', OptimizePng) {
         // but it seems to function properly(?), whereas just always returning false does not
         !inputFiles.files.any { file -> file.length() != file.size() }
     }
+}
+
+tasks.withType(JavaCompile).configureEach
+{
+    options.encoding = 'UTF-8'
 }
 
 idea {
