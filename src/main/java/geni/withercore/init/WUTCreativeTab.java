@@ -5,6 +5,7 @@ import geni.withercore.common.registration.impl.BlockRegistryObject;
 import geni.withercore.common.registration.impl.ItemDeferredRegister;
 import geni.witherutils.WitherUtils;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -47,11 +48,11 @@ public class WUTCreativeTab {
 							output.accept(new ItemStack(WUTBlocks.RACKENERGY_CONTROLLER.get()));
 							output.accept(new ItemStack(WUTBlocks.FLOORSENSOR.get()));
 							output.accept(new ItemStack(WUTBlocks.WALL_SENSOR.get()));
-							output.accept(new ItemStack(WUTBlocks.GREENHOUSE.get()));
 							output.accept(new ItemStack(WUTBlocks.STEEL_BEAM.get()));
 							output.accept(new ItemStack(WUTBlocks.STEEL_POLE.get()));
 							output.accept(new ItemStack(WUTBlocks.STEEL_RAILING.get()));
 							output.accept(new ItemStack(WUTBlocks.STEEL_CATWALK.get()));
+							output.accept(new ItemStack(WUTBlocks.GREENHOUSE.get()));
 							output.accept(new ItemStack(WUTBlocks.ANGEL.get()));
 							output.accept(new ItemStack(WUTBlocks.BRICKSDARK.get()));
 							output.accept(new ItemStack(WUTBlocks.BRICKSLAVA.get()));
@@ -62,6 +63,18 @@ public class WUTCreativeTab {
 
 							output.accept(new ItemStack(WUTBlocks.HYDRO_RESERVOIR.get()));
 							output.accept(new ItemStack(WUTBlocks.HYDRO_TURBINE.get()));
+
+							output.accept(new ItemStack(WUTBlocks.CONVEYOR_STAND.get()));
+
+							output.accept(new ItemStack(WUTBlocks.SCREEN.get()));
+
+							output.accept(new ItemStack(WUTBlocks.POWER_PLUG.get()));
+							output.accept(new ItemStack(WUTBlocks.POWER_POLE.get()));
+							output.accept(new ItemStack(WUTBlocks.STREET_LAMP.get()));
+							output.accept(new ItemStack(WUTBlocks.WALL_LAMP.get()));
+							output.accept(new ItemStack(WUTBlocks.CEILING_LAMP.get()));
+
+							output.accept(new ItemStack(WUTBlocks.PIPE_POLE.get()));
 						})
 						.build();
 				return tab;
@@ -90,11 +103,16 @@ public class WUTCreativeTab {
 							output.accept(new ItemStack(WUTItems.SOULBANK_BASIC.get()));
 							output.accept(new ItemStack(WUTItems.SOULBANK_ADVANCED.get()));
 							output.accept(new ItemStack(WUTItems.SOULBANK_ULTRA.get()));
-							output.accept(new ItemStack(WUTItems.GUARD_DRONE.get()));
-							output.accept(new ItemStack(WUTItems.DRONESTICK.get()));
 							output.accept(new ItemStack(WUTItems.COLDSLUSH_BUCKET.get()));
 
 							output.accept(new ItemStack(WUTItems.PENSTOCKPIPE.get()));
+							output.accept(new ItemStack(WUTItems.SPLINE_BUILD_TOOL.get()));
+							output.accept(new ItemStack(WUTItems.POWER_CABLE.get()));
+
+							output.accept(new ItemStack(WUTItems.REMOTE.get()));
+
+							output.accept(new ItemStack(WUTItems.PIPE_BUILD_TOOL.get()));
+							output.accept(new ItemStack(WUTItems.PIPE_PUMP.get()));
 						})
 						.build();
 				return tab;
@@ -110,6 +128,12 @@ public class WUTCreativeTab {
 						.displayItems((features, output) -> {
 
 							for (var entry : WUTBlocks.CTM_CONCRETE.entrySet()) {
+								output.accept(new ItemStack(entry.getValue()));
+							}
+							for (var entry : WUTBlocks.CTM_DIRT.entrySet()) {
+								output.accept(new ItemStack(entry.getValue()));
+							}
+							for (var entry : WUTBlocks.CTM_GLASS.entrySet()) {
 								output.accept(new ItemStack(entry.getValue()));
 							}
 							for (var entry : WUTBlocks.CTM_METAL.entrySet()) {

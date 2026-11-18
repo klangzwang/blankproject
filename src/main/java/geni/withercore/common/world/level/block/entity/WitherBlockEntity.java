@@ -16,6 +16,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.capabilities.BlockCapability;
@@ -47,7 +49,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WitherBlockEntity extends BlockEntity implements GeoAnimatable {
-	
+
+    @Nullable
+    private UUID lastPlayerUUID;
+
     public static final String DATA = "Data";
     public static final String INDEX = "Index";
     private final List<NetworkDataSlot<?>> dataSlots = new ArrayList<>();
@@ -244,8 +249,19 @@ public class WitherBlockEntity extends BlockEntity implements GeoAnimatable {
     }
 
     @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.hasUUID("LastPlayerUUID")) {
+            this.lastPlayerUUID = tag.getUUID("LastPlayerUUID");
+        }
+    }
+
+    @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        if (lastPlayerUUID != null) {
+            tag.putUUID("LastPlayerUUID", lastPlayerUUID);
+        }
         saveAdditionalSynced(tag, registries);
     }
 
@@ -427,6 +443,21 @@ public class WitherBlockEntity extends BlockEntity implements GeoAnimatable {
     public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {}
     public void onAdded(Level world, BlockState state, BlockState oldState, boolean isMoving) {}
 	public void onNeighborBlockChange(BlockPos fromPos) {}
+
+    //public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) { return InteractionResult.PASS; }
+
+    /*public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        if (!pLevel.isClientSide) {
+            this.lastPlayerUUID = pPlayer.getUUID();
+            this.setChanged();
+        }
+        return InteractionResult.SUCCESS;
+    }*/
+
+    @Nullable
+    public UUID getLastPlayerUUID() {
+        return this.lastPlayerUUID;
+    }
 
 	public void popRecipeExperience(ServerPlayer serverplayer, float count) {}
 

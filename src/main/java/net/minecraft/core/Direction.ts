@@ -1,0 +1,1 @@
+// Definiert die sechs Raumrichtungen.

@@ -4,9 +4,9 @@ import geni.withercore.common.registration.impl.ItemDeferredRegister;
 import geni.withercore.common.registration.impl.ItemRegistryObject;
 import geni.withercore.common.world.item.WitherItem;
 import geni.witherutils.WitherUtils;
-import geni.witherutils.common.world.entity.drone.DroneEntity;
-import geni.witherutils.common.world.entity.drone.GuardDroneEntity;
 import geni.witherutils.common.world.item.*;
+import geni.witherutils.common.world.item.pipe.PipeBuildToolItem;
+import geni.witherutils.common.world.item.pipe.PipePumpItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -23,10 +23,12 @@ public class WUTItems
     public static final ItemRegistryObject<CutterItem> CUTTER = ITEMS.registerItem("cutter", CutterItem::new);
     public static final ItemRegistryObject<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new);
 
-    public static final ItemRegistryObject<DroneStickItem> DRONESTICK = ITEMS.registerItem("dronestick", DroneStickItem::new);
-
-    public static final ItemRegistryObject<DroneItem> DRONE = register("drone", () -> new DroneItem(DroneEntity::new));
-    public static final ItemRegistryObject<DroneItem> GUARD_DRONE = register("guard_drone", () -> new DroneItem(GuardDroneEntity::new));
+    public static final ItemRegistryObject<SplineBuildToolItem> SPLINE_BUILD_TOOL = ITEMS.registerItem("spline_build_tool", SplineBuildToolItem::new);
+    public static final ItemRegistryObject<PenstockPipeItem> PENSTOCKPIPE = ITEMS.registerItem("penstock_pipe", PenstockPipeItem::new);
+    public static final ItemRegistryObject<PowerCableItem> POWER_CABLE = ITEMS.registerItem("power_cable", PowerCableItem::new);
+    public static final ItemRegistryObject<RemoteItem> REMOTE = ITEMS.registerItem("remote", RemoteItem::new);
+    public static final ItemRegistryObject<PipeBuildToolItem> PIPE_BUILD_TOOL = ITEMS.registerItem("pipe_build_tool", PipeBuildToolItem::new);
+    public static final ItemRegistryObject<PipePumpItem> PIPE_PUMP = ITEMS.registerItem("pipe_pump", PipePumpItem::new);
 
     public static final ItemRegistryObject<WitherItem> WITHERSTEEL_CASE = ITEMS.registerItem("withersteel_case", WitherItem::new);
     public static final ItemRegistryObject<WitherItem> WITHERSTEEL_INGOT = ITEMS.registerItem("withersteel_ingot", WitherItem::new);
@@ -39,8 +41,6 @@ public class WUTItems
     public static final ItemRegistryObject<SoulBankItem> SOULBANK_BASIC = ITEMS.registerItem("soulbank_basic", SoulBankItem.Basic::new);
     public static final ItemRegistryObject<SoulBankItem> SOULBANK_ADVANCED = ITEMS.registerItem("soulbank_adv", SoulBankItem.Advanced::new);
     public static final ItemRegistryObject<SoulBankItem> SOULBANK_ULTRA = ITEMS.registerItem("soulbank_ultra", SoulBankItem.Ultra::new);
-
-    public static final ItemRegistryObject<PenstockPipeItem> PENSTOCKPIPE = ITEMS.registerItem("penstock_pipe", PenstockPipeItem::new);
 
     /*
      *

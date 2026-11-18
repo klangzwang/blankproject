@@ -1,0 +1,1 @@
+// Definiert einen Statuseffekt.

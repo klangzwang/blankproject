@@ -1,0 +1,1 @@
+// Basisklasse für Minecraft-Blöcke.

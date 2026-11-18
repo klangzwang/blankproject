@@ -14,7 +14,7 @@ public class WitherItem extends Item {
 	{
 		super(props);
 	}
-	
+
 	@Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag)
     {

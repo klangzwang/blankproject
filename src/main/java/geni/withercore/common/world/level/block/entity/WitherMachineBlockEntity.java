@@ -156,7 +156,7 @@ public class WitherMachineBlockEntity extends WitherBlockEntity implements Namea
     @Override
     public boolean hasItemCapability()
     {
-        return true;
+        return false;
     }
     
     public final IItemHandler getItemHandler()
@@ -251,7 +251,7 @@ public class WitherMachineBlockEntity extends WitherBlockEntity implements Namea
     @Override
     public boolean hasFluidCapability()
     {
-        return true;
+        return false;
     }
     
     public final IFluidHandler getFluidHandler()
@@ -311,7 +311,44 @@ public class WitherMachineBlockEntity extends WitherBlockEntity implements Namea
     }
 
     protected void onEnergyContentsChanged() {}
-    
+
+    public int sendToEnergyHandler(Direction dir, int maxTransfer) {
+        if (this.level == null || this.level.isClientSide() || this.energyStorage == null) {
+            return 0;
+        }
+
+        if (this.energyStorage.getEnergyStored() <= 0) {
+            return 0;
+        }
+
+        BlockPos targetPos = this.worldPosition.relative(dir);
+        IEnergyStorage targetEnergy = this.level.getCapability(
+                Capabilities.EnergyStorage.BLOCK,
+                targetPos,
+                dir.getOpposite()
+        );
+
+        if (targetEnergy == null || !targetEnergy.canReceive()) {
+            return 0;
+        }
+
+        int energyAvailable = this.energyStorage.extractEnergy(maxTransfer, true);
+        if (energyAvailable <= 0) {
+            return 0;
+        }
+
+        int energyAccepted = targetEnergy.receiveEnergy(energyAvailable, false);
+        if (energyAccepted > 0) {
+            int energyExtracted = this.energyStorage.extractEnergy(energyAccepted, false);
+            if (energyExtracted > 0) {
+                setChanged();
+            }
+            return energyExtracted;
+        }
+
+        return 0;
+    }
+
     /*
      * 
      * LITREDSTONE

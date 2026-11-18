@@ -31,6 +31,7 @@ public class WUTSounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> DRONEIDLE = SOUND_TYPES.register("droneidle", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(WitherUtils.MODID, "droneidle")));
 	public static final DeferredHolder<SoundEvent, SoundEvent> SHIELD_STRIKE = SOUND_TYPES.register("shieldstrike", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(WitherUtils.MODID, "shieldstrike")));
 	public static final DeferredHolder<SoundEvent, SoundEvent> BUZZ = SOUND_TYPES.register("buzz", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(WitherUtils.MODID, "buzz")));
+	public static final DeferredHolder<SoundEvent, SoundEvent> POWERPOLE = SOUND_TYPES.register("powerpole", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(WitherUtils.MODID, "powerpole")));
 
 	public static DeferredSoundType STANDARD = new DeferredSoundType(1.0F, 1.0F,
 			() -> SoundEvents.STONE_BREAK,

@@ -1,0 +1,1 @@
+// Repräsentiert einen Minecraft-Spieler.

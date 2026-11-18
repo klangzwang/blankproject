@@ -12,11 +12,14 @@ import geni.withercore.init.WUTSounds;
 import geni.witherutils.common.world.item.WrenchItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -37,6 +40,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -49,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class WitherAbstractBlock extends WitherBlock implements IBlock {
+public abstract class WitherAbstractBlock extends WitherBlock {
 	
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -65,13 +69,7 @@ public abstract class WitherAbstractBlock extends WitherBlock implements IBlock 
             this.needsNeighbourCheck = customProps.isCheckingNeighbour();
             this.needsAreaCheck = customProps.isCheckingArea();
     }
-    
-	@Override
-	public ItemBlock<?> getBlockItem(Item.Properties properties)
-	{
-		return new ItemBlock<>(this, properties);
-	}
-    
+
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context)
@@ -150,6 +148,11 @@ public abstract class WitherAbstractBlock extends WitherBlock implements IBlock 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit)
     {
         BlockEntity entity = level.getBlockEntity(pos);
+
+
+
+
+
         if (entity instanceof WitherMachineBlockEntity machineBlockEntity && machineBlockEntity.canOpenMenu())
         {
             if (player instanceof ServerPlayer serverPlayer)

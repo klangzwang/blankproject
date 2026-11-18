@@ -1,19 +1,21 @@
 package geni.withercore.common.network;
 
+import geni.witherapi.fluid.pipe.PipeAnchor;
 import geni.withercore.common.network.dataslot.ClientboundDataSlotChange;
 import geni.withercore.common.network.dataslot.ServerboundCDataSlotUpdate;
 import geni.withercore.common.network.menu.ClientboundSyncSlotDataPacket;
 import geni.withercore.common.network.menu.ServerboundSetSyncSlotDataPacket;
-import geni.withercore.common.network.packet.PacketPlayMovingSound;
-import geni.withercore.common.network.packet.PacketPlaySound;
-import geni.withercore.common.network.packet.RotateBlockPacket;
-import geni.withercore.common.network.packet.TeleportPacket;
+import geni.withercore.common.network.packet.*;
 import geni.withercore.common.network.payload.ClientPayloadHandler;
+import geni.withercore.common.network.payload.ConveyorPayloadHandler;
 import geni.withercore.common.network.payload.ServerPayloadHandler;
 import geni.withercore.init.WUTSounds;
 import geni.witherutils.WitherUtils;
+import geni.witherutils.common.world.item.PowerCableItem;
+import geni.witherutils.common.world.item.pipe.PipeBuildToolItem;
+import geni.witherutils.common.world.item.pipe.PipePumpItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -40,6 +42,15 @@ public class CoreNetwork {
 				.versioned(PROTOCOL_VERSION)
 				.optional();
 
+		registrar.playToClient(EmitParticlePacket.TYPE, EmitParticlePacket.STREAM_CODEC,
+				ClientPayloadHandler.getInstance()::handleEmitParticle);
+
+		registrar.playToClient(EmitParticleSplinePacket.TYPE, EmitParticleSplinePacket.STREAM_CODEC,
+				ClientPayloadHandler.getInstance()::handleEmitSplineParticle);
+
+		registrar.playToClient(EmitParticlesPacket.TYPE, EmitParticlesPacket.STREAM_CODEC,
+				ClientPayloadHandler.getInstance()::handleEmitParticles);
+
 		registrar.playToClient(ServerboundCDataSlotUpdate.TYPE, ServerboundCDataSlotUpdate.STREAM_CODEC,
 				ClientPayloadHandler.getInstance()::handleDataSlotUpdate);
 
@@ -58,11 +69,101 @@ public class CoreNetwork {
 		registrar.playToServer(RotateBlockPacket.TYPE, RotateBlockPacket.STREAM_CODEC,
 				(pkt, ctx) -> RotateBlockPacket.handle(pkt, (ServerPlayer) ctx.player()));
 
-		registrar.playToClient(PacketPlaySound.TYPE, PacketPlaySound.STREAM_CODEC,
-				PacketPlaySound::handle);
+		registrar.playToServer(ConfigureSlotPacket.TYPE, ConfigureSlotPacket.STREAM_CODEC,
+				ConfigureSlotPacket::handle);
 
-		registrar.playToClient(PacketPlayMovingSound.TYPE, PacketPlayMovingSound.STREAM_CODEC,
-				PacketPlayMovingSound::handle);
+		registrar.playToServer(EjectSlotPacket.TYPE, EjectSlotPacket.STREAM_CODEC,
+				EjectSlotPacket::handle);
+
+		registrar.playToServer(ServerboundMenuActionPacket.TYPE,
+				ServerboundMenuActionPacket.STREAM_CODEC,
+				(pkt, ctx) -> ServerboundMenuActionPacket.handle(pkt, (ServerPlayer) ctx.player()));
+
+		//
+		// Screen
+		registrar.playToServer(EditScreenPacket.TYPE, EditScreenPacket.STREAM_CODEC,
+				EditScreenPacket::handle);
+
+		registrar.playToServer(ScreenPowerPacket.TYPE, ScreenPowerPacket.STREAM_CODEC,
+				ScreenPowerPacket::handle);
+
+		registrar.playToServer(ScreenImageReadyPacket.TYPE, ScreenImageReadyPacket.STREAM_CODEC,
+				ScreenImageReadyPacket::handle);
+
+		//
+		// PowerCables
+		//
+		registrar.playToServer(PlacePowerCablePacket.TYPE, PlacePowerCablePacket.STREAM_CODEC,
+				(pkt, ctx) -> ctx.enqueueWork(() -> {
+					if (ctx.player() instanceof ServerPlayer sp) {
+						Direction placeFacing = Direction.from3DDataValue(pkt.placeFacing3DIndex());
+						PowerCableItem.executeServerPlacement(
+								sp.serverLevel(),
+								sp,
+								pkt.startPos(),
+								pkt.endPos(),
+								pkt.autoPlaceMode(),
+								pkt.placePos(),
+								placeFacing
+						);
+					}
+				}));
+
+		registrar.playToClient(PowerGridSyncPacket.TYPE, PowerGridSyncPacket.STREAM_CODEC,
+				ClientPayloadHandler.getInstance()::handlePowerGridSync);
+
+		//
+		// ConveyorBelts
+		//
+		registrar.playToServer(PlaceConveyorPolePacket.TYPE, PlaceConveyorPolePacket.STREAM_CODEC,
+				ConveyorPayloadHandler::handlePlacePole);
+
+		registrar.playToServer(PlaceConveyorPacket.TYPE, PlaceConveyorPacket.STREAM_CODEC,
+				ConveyorPayloadHandler::handlePlaceConveyor);
+
+		registrar.playToServer(BreakConveyorBeltPacket.TYPE, BreakConveyorBeltPacket.STREAM_CODEC,
+				ConveyorPayloadHandler::handleBreakConveyor);
+
+		registrar.playToClient(ConveyorItemsSyncPacket.TYPE, ConveyorItemsSyncPacket.STREAM_CODEC,
+				ConveyorPayloadHandler::handleItemsSync);
+
+		//
+		// Pipes
+		//
+		registrar.playToServer(PlaceFluidPipePacket.TYPE, PlaceFluidPipePacket.STREAM_CODEC,
+				(pkt, ctx) -> ctx.enqueueWork(() -> {
+					ServerPlayer sp = (ServerPlayer) ctx.player();
+					PipeAnchor start = PipeAnchor.fromNbt(pkt.startAnchorTag());
+					PipeAnchor end = PipeAnchor.fromNbt(pkt.endAnchorTag());
+					Direction facing = Direction.from2DDataValue(pkt.endPoleFacingIndex());
+					PipeBuildToolItem.executePlacement(sp.serverLevel(), sp, start, end, pkt.placeEndPole(), pkt.endPolePos(), facing);
+				}));
+
+		registrar.playToServer(PlacePipePumpPacket.TYPE, PlacePipePumpPacket.STREAM_CODEC,
+				(pkt, ctx) -> ctx.enqueueWork(() -> {
+					ServerPlayer sp = (ServerPlayer) ctx.player();
+					PipePumpItem.executePumpPlacement(sp.serverLevel(), sp, pkt.pipePos(), pkt.splineT());
+				}));
+
+		registrar.playToServer(PipeBuildToolClickPacket.TYPE, PipeBuildToolClickPacket.STREAM_CODEC,
+				(pkt, ctx) -> ctx.enqueueWork(() -> {
+					ServerPlayer sp = (ServerPlayer) ctx.player();
+					PipeBuildToolItem.handleServerClick(
+							sp.serverLevel(),
+							sp,
+							pkt.mainHand(),
+							pkt.pos(),
+							pkt.face(),
+							pkt.hitLocation(),
+							pkt.clearOnly()
+					);
+				}));
+
+		registrar.playToServer(RemovePipePumpPacket.TYPE, RemovePipePumpPacket.STREAM_CODEC,
+				(pkt, ctx) -> ctx.enqueueWork(() -> {
+					ServerPlayer sp = (ServerPlayer) ctx.player();
+					PipePumpItem.executePumpRemoval(sp.serverLevel(), sp, pkt.pipePos(), pkt.pumpIndex());
+				}));
 	}
 
 	public static void sendToAll(CustomPacketPayload message) {

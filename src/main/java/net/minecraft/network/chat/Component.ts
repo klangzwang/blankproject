@@ -1,0 +1,1 @@
+// Repräsentiert strukturierten Minecraft-Text.

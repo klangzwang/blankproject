@@ -2,11 +2,16 @@ package geni.withercore.init;
 
 import geni.withercore.common.registration.impl.BlockDeferredRegister;
 import geni.withercore.common.registration.impl.BlockRegistryObject;
-import geni.withercore.common.world.fluid.AbstractLiquidBlock;
 import geni.withercore.common.world.level.block.WitherBlock;
 import geni.witherutils.WitherUtils;
 import geni.witherutils.common.world.level.block.*;
+import geni.witherutils.common.world.level.block.controller.SlotControllerBlock;
+import geni.witherutils.common.world.level.block.conveyor.ConveyorBeltBlock;
+import geni.witherutils.common.world.level.block.conveyor.SupportPoleBlock;
+import geni.witherutils.common.world.level.block.conveyor.SupportPoleBlockItem;
 import geni.witherutils.common.world.level.block.fluid.ColdSlushBlock;
+import geni.witherutils.common.world.level.block.pipe.FluidPipeBlock;
+import geni.witherutils.common.world.level.block.pipe.PipePoleBlock;
 import geni.witherutils.common.world.level.block.rack.casing.CaseBlock;
 import geni.witherutils.common.world.level.block.rack.controller.energy.ControllerEnergyBlock;
 import geni.witherutils.common.world.level.block.rack.controller.energy.ControllerEnergyBlockItem;
@@ -15,7 +20,10 @@ import geni.witherutils.common.world.level.block.rack.controller.fluid.Controlle
 import geni.witherutils.common.world.level.block.rack.controller.item.ControllerItemBlock;
 import geni.witherutils.common.world.level.block.rack.controller.item.ControllerItemBlockItem;
 import geni.witherutils.common.world.level.block.rack.terminal.TerminalBlock;
+import geni.witherutils.common.world.level.block.screen.ScreenBlock;
 import geni.witherutils.common.world.level.block.solar.SolarType;
+import geni.witherutils.common.world.level.block.state.StreetLampPart;
+import geni.witherutils.common.world.level.block.steel.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -32,12 +40,6 @@ public class WUTBlocks {
 
 	public static final BlockDeferredRegister BLOCKS = new BlockDeferredRegister(WitherUtils.MODID);
 
-
-	public static final BlockRegistryObject<HydroReservoirBlock, BlockItem> HYDRO_RESERVOIR = BLOCKS.register("hydro_reservoir",
-			HydroReservoirBlock::new);
-	public static final BlockRegistryObject<HydroTurbineBlock, BlockItem> HYDRO_TURBINE = BLOCKS.register("hydro_turbine",
-			HydroTurbineBlock::new);
-
 	public static final BlockRegistryObject<AnvilBlock, BlockItem> ANVIL = BLOCKS.register("anvil", AnvilBlock::new);
 	public static final BlockRegistryObject<AngelBlock, AngelBlockItem> ANGEL = BLOCKS.register("angel",
 			() -> new AngelBlock(WUTBlocks.defaultProps()), block -> new AngelBlockItem(block, new Item.Properties()));
@@ -45,6 +47,10 @@ public class WUTBlocks {
 	public static final BlockRegistryObject<CreativeGeneratorBlock, CreativeGeneratorBlockItem> CREATIVE_GENERATOR = BLOCKS
 			.register("creative_generator", CreativeGeneratorBlock::new,
 					block -> new CreativeGeneratorBlockItem(block, new Item.Properties()));
+
+	public static final BlockRegistryObject<ScreenBlock, BlockItem> SCREEN = BLOCKS.register("screen",
+			() -> new ScreenBlock(WUTBlocks.defaultProps()
+					.lightLevel(state -> ScreenBlock.getLightEmissionForStage(state.getValue(ScreenBlock.LIGHT_STAGE)))));
 
 	public static final BlockRegistryObject<WitherBlock, BlockItem> SOLARCASE = BLOCKS.register("solar_case",
 			() -> new WitherBlock(WUTBlocks.defaultProps()));
@@ -106,12 +112,46 @@ public class WUTBlocks {
 			() -> new SteelBeamBlock(WUTBlocks.variant1Props()));
 	public static final BlockRegistryObject<SteelPoleBlock, BlockItem> STEEL_POLE = BLOCKS.register("steel_pole",
 			() -> new SteelPoleBlock(WUTBlocks.variant1Props()));
-	public static final BlockRegistryObject<RailingBlock, BlockItem> STEEL_RAILING = BLOCKS.register("steel_railing",
-			() -> new RailingBlock(WUTBlocks.defaultProps(), RailingBlock.getPixeledAABB(0, 0, 0, 0, 0, 0),
-					RailingBlock.getPixeledAABB(0, 0, 0, 16, 15.9, 1)));
-	public static final BlockRegistryObject<CatwalkBlock, CatwalkBlockItem> STEEL_CATWALK = BLOCKS.register("catwalk",
-			() -> new CatwalkBlock(WUTBlocks.variant1Props()),
-			block -> new CatwalkBlockItem(block, new Item.Properties()));
+	public static final BlockRegistryObject<SteelRailingBlock, BlockItem> STEEL_RAILING = BLOCKS.register("steel_railing",
+			() -> new SteelRailingBlock(WUTBlocks.defaultProps()));
+	public static final BlockRegistryObject<SteelCatwalkBlock, SteelCatwalkBlockItem> STEEL_CATWALK = BLOCKS.register("steel_catwalk",
+			() -> new SteelCatwalkBlock(WUTBlocks.variant1Props()),
+			block -> new SteelCatwalkBlockItem(block, new Item.Properties()));
+
+	public static final BlockRegistryObject<HydroReservoirBlock, BlockItem> HYDRO_RESERVOIR = BLOCKS.register("hydro_reservoir",
+			HydroReservoirBlock::new);
+	public static final BlockRegistryObject<HydroTurbineBlock, BlockItem> HYDRO_TURBINE = BLOCKS.register("hydro_turbine",
+			HydroTurbineBlock::new);
+
+	public static final BlockRegistryObject<PipePoleBlock, BlockItem> PIPE_POLE = BLOCKS.register("pipe_pole",
+			() -> new PipePoleBlock(WUTBlocks.variant1Props()));
+	public static final BlockRegistryObject<FluidPipeBlock, BlockItem> FLUID_PIPE = BLOCKS.register("fluid_pipe",
+			() -> new FluidPipeBlock(WUTBlocks.variant1Props().noLootTable()));
+
+	public static final BlockRegistryObject<SupportPoleBlock, SupportPoleBlockItem> CONVEYOR_STAND = BLOCKS.register("conveyor_stand",
+			() -> new SupportPoleBlock(WUTBlocks.variant1Props()),
+			block -> new SupportPoleBlockItem(block, new Item.Properties()));
+	public static final BlockRegistryObject<ConveyorBeltBlock, BlockItem> CONVEYOR_BELT = BLOCKS.register("conveyor_belt",
+			() -> new ConveyorBeltBlock(WUTBlocks.variant1Props()));
+
+	/*
+	 *
+	 * POWER
+	 *
+	 */
+	public static final BlockRegistryObject<PowerPlugBlock, BlockItem> POWER_PLUG = BLOCKS.register("power_plug",
+			() -> new PowerPlugBlock(WUTBlocks.variant1Props()));
+	public static final BlockRegistryObject<PowerPoleBlock, BlockItem> POWER_POLE = BLOCKS.register("power_pole",
+			() -> new PowerPoleBlock(WUTBlocks.variant1Props()));
+	public static final BlockRegistryObject<StreetLampBlock, BlockItem> STREET_LAMP = BLOCKS.register("street_lamp",
+			() -> new StreetLampBlock(WUTBlocks.variant1Props()
+					.lightLevel(state -> state.getValue(StreetLampBlock.PART) == StreetLampPart.UPPER && state.getValue(StreetLampBlock.LIT) ? 15 : 0)));
+	public static final BlockRegistryObject<WallLampBlock, BlockItem> WALL_LAMP = BLOCKS.register("wall_lamp",
+			() -> new WallLampBlock(WUTBlocks.variant1Props()
+					.lightLevel(state -> state.getValue(WallLampBlock.LIT) ? 15 : 0)));
+	public static final BlockRegistryObject<CeilingLampBlock, BlockItem> CEILING_LAMP = BLOCKS.register("ceiling_lamp",
+			() -> new CeilingLampBlock(WUTBlocks.variant1Props()
+					.lightLevel(state -> state.getValue(CeilingLampBlock.LIT) ? 15 : 0)));
 
 	/*
 	 * 
@@ -222,16 +262,20 @@ public class WUTBlocks {
 	 * CTMBLOCKS
 	 *
 	 */
-	public static final Map<String, BlockRegistryObject<Block, BlockItem>> CTM_CONCRETE = new HashMap<>();
-	public static final Map<String, BlockRegistryObject<Block, BlockItem>> CTM_METAL = new HashMap<>();
-	public static final Map<String, BlockRegistryObject<Block, BlockItem>> CTM_STONE = new HashMap<>();
-	public static final Map<String, BlockRegistryObject<Block, BlockItem>> CTM_WOOD = new HashMap<>();
+	public static final Map<String, BlockRegistryObject<CutterBlock, CutterBlockItem>> CTM_CONCRETE = new HashMap<>();
+	public static final Map<String, BlockRegistryObject<CutterBlock, CutterBlockItem>> CTM_DIRT = new HashMap<>();
+	public static final Map<String, BlockRegistryObject<CutterBlock, CutterBlockItem>> CTM_GLASS = new HashMap<>();
+	public static final Map<String, BlockRegistryObject<CutterBlock, CutterBlockItem>> CTM_METAL = new HashMap<>();
+	public static final Map<String, BlockRegistryObject<CutterBlock, CutterBlockItem>> CTM_STONE = new HashMap<>();
+	public static final Map<String, BlockRegistryObject<CutterBlock, CutterBlockItem>> CTM_WOOD = new HashMap<>();
 
 	static {
 		Map<String, Integer> ctmMaterials = Map.of(
-				"concrete", 3,
-				"metal", 8,
-				"stone", 10,
+				"concrete", 10,
+				"dirt", 6,
+				"glass", 3,
+				"metal", 11,
+				"stone", 12,
 				"wood", 10);
 
 		for (Map.Entry<String, Integer> entry : ctmMaterials.entrySet()) {
@@ -243,17 +287,20 @@ public class WUTBlocks {
 
 				Block.Properties props = switch (material) {
 					case "concrete" -> WUTBlocks.ctmConcreteProps();
+					case "dirt" -> WUTBlocks.ctmDirtProps();
+					case "glass" -> WUTBlocks.ctmGlassProps();
 					case "metal" -> WUTBlocks.ctmMetalProps();
 					case "stone" -> WUTBlocks.ctmStoneProps();
 					default -> WUTBlocks.ctmWoodProps();
 				};
 
-				BlockRegistryObject<Block, BlockItem> blockObj = BLOCKS.register(
-						name,
-						() -> new Block(props));
+				BlockRegistryObject<CutterBlock, CutterBlockItem> blockObj = BLOCKS.register(name,
+						() -> new CutterBlock(props), block -> new CutterBlockItem(block, new Item.Properties()));
 
 				switch (material) {
 					case "concrete" -> CTM_CONCRETE.put(name, blockObj);
+					case "dirt" -> CTM_DIRT.put(name, blockObj);
+					case "glass" -> CTM_GLASS.put(name, blockObj);
 					case "metal" -> CTM_METAL.put(name, blockObj);
 					case "stone" -> CTM_STONE.put(name, blockObj);
 					default -> CTM_WOOD.put(name, blockObj);
@@ -274,7 +321,24 @@ public class WUTBlocks {
 				.strength(2.0F, 6.0F)
 				.sound(SoundType.STONE);
 	}
+	
+	public static Block.Properties ctmDirtProps() {
+		return Block.Properties
+				.of()
+				.mapColor(MapColor.DIRT)
+				.strength(0.5F, 0.5F)
+				.sound(SoundType.GRASS);
+	}
 
+	public static Block.Properties ctmGlassProps() {
+		return Block.Properties
+				.of()
+				.mapColor(MapColor.ICE)
+				.strength(0.3F, 0.3F)
+				.sound(SoundType.GLASS)
+				.noOcclusion();
+	}
+	
 	public static Block.Properties ctmMetalProps() {
 		return Block.Properties
 				.of()
@@ -304,5 +368,14 @@ public class WUTBlocks {
 	 * LIQUID
 	 *
 	 */
-	public static final BlockRegistryObject<LiquidBlock, BlockItem> COLDSLUSH = BLOCKS.register("coldslush", () -> new ColdSlushBlock(WUTFluids.COLDSLUSH, fluidProps().noLootTable().liquid().mapColor(DyeColor.LIGHT_BLUE)));
+	public static final BlockRegistryObject<LiquidBlock, BlockItem> COLDSLUSH = BLOCKS.register("coldslush",
+			() -> new ColdSlushBlock(WUTFluids.COLDSLUSH, fluidProps().noLootTable().liquid().mapColor(DyeColor.LIGHT_BLUE)));
+
+	/*
+	 *
+	 * SLOT CONTROLLER
+	 *
+	 */
+	public static final BlockRegistryObject<SlotControllerBlock, BlockItem> SLOT_CONTROLLER = BLOCKS.register(
+			"slot_controller", () -> new SlotControllerBlock(WUTBlocks.defaultProps()));
 }

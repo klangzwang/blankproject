@@ -57,6 +57,7 @@ configurations {
 }
 
 repositories {
+    mavenCentral()
     maven { url = "https://chickenbones.net/maven" }
     maven { url = "https://maven.blamejared.com/" }
     maven { url = "https://dvs1.progwml6.com/files/maven" }

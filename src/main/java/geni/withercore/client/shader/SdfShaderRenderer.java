@@ -79,6 +79,8 @@ public class SdfShaderRenderer {
 
         shader.clear();
         RenderSystem.enableDepthTest();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private static void renderFallback(GuiGraphics gg, float x, float y, float z, SdfShaderConfig config) {

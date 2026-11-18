@@ -1,13 +1,24 @@
 package geni.withercore.init;
 
 import geni.witherutils.WitherUtils;
+import geni.witherutils.common.world.particle.RangeParticleType;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
 public class WUTParticles
 {
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, WitherUtils.MODID);
+
+    public static final DeferredHolder<ParticleType<?>, RangeParticleType> RANGE_PARTICLE = PARTICLE_TYPES
+            .register("range_particle", RangeParticleType::new);
+
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> ELECTRIC_SPARK_BOUNCE = PARTICLE_TYPES
+            .register("electric_spark_bounce", () -> new SimpleParticleType(true));
+
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> ELECTRIC_SPARK_FAST = PARTICLE_TYPES
+            .register("electric_spark_fast", () -> new SimpleParticleType(true));
 
     /*public static final DeferredHolder<ParticleType<?>, DataParticleType> STARS = PARTICLE_TYPES.register("stars", () -> new DataParticleType());
     public static final DeferredHolder<ParticleType<?>, DataParticleType> SPRAY = PARTICLE_TYPES.register("spray", () -> new DataParticleType());

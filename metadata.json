@@ -1,7 +1,8 @@
 {
-  "name": "WitherUtils Prototyping Sandbox",
-  "description": "Minecraft 1.21.1 NeoForge Prototyping Sandbox: First-Person 3D, Orbit Structure viewer, and NeoForge mod dev tools.",
-  "capabilities": [
+  "name": "Minecraft 1.21.1 Neoforge",
+  "description": "",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]
 }

@@ -29,6 +29,19 @@ public class SdfShaderConfig {
         return new SdfShaderConfig(width, height);
     }
 
+    public SdfShaderConfig copy() {
+        SdfShaderConfig copy = new SdfShaderConfig(this.rectWidth, this.rectHeight);
+        copy.bgColorTop = this.bgColorTop.clone();
+        copy.bgColorBottom = this.bgColorBottom.clone();
+        copy.borderColor = this.borderColor.clone();
+        copy.radius = this.radius;
+        copy.borderThickness = this.borderThickness;
+        copy.shadowOffset = this.shadowOffset.clone();
+        copy.shadowBlur = this.shadowBlur;
+        copy.shadowColor = this.shadowColor.clone();
+        return copy;
+    }
+
     public static SdfShaderConfig card(float width, float height) {
         SdfShaderConfig config = new SdfShaderConfig(width, height);
         config.setRadius(6.0f);
@@ -81,7 +94,7 @@ public class SdfShaderConfig {
     }
 
     public float[] getBgColorTop() {
-        return bgColorTop;
+        return bgColorTop.clone();
     }
 
     public SdfShaderConfig setBgColorTop(float r, float g, float b, float a) {
@@ -95,7 +108,7 @@ public class SdfShaderConfig {
     }
 
     public float[] getBgColorBottom() {
-        return bgColorBottom;
+        return bgColorBottom.clone();
     }
 
     public SdfShaderConfig setBgColorBottom(float r, float g, float b, float a) {
@@ -109,7 +122,7 @@ public class SdfShaderConfig {
     }
 
     public float[] getBorderColor() {
-        return borderColor;
+        return borderColor.clone();
     }
 
     public SdfShaderConfig setBorderColor(float r, float g, float b, float a) {
@@ -141,7 +154,7 @@ public class SdfShaderConfig {
     }
 
     public float[] getShadowOffset() {
-        return shadowOffset;
+        return shadowOffset.clone();
     }
 
     public SdfShaderConfig setShadowOffset(float x, float y) {
@@ -159,7 +172,7 @@ public class SdfShaderConfig {
     }
 
     public float[] getShadowColor() {
-        return shadowColor;
+        return shadowColor.clone();
     }
 
     public SdfShaderConfig setShadowColor(float r, float g, float b, float a) {

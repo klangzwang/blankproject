@@ -3,23 +3,27 @@ package geni.withercore.init;
 import geni.withercore.common.world.entity.WitherEntity;
 import geni.withercore.common.world.item.WitherInventoryItem;
 import geni.withercore.common.world.level.block.entity.WitherBlockEntity;
+import geni.withercore.common.inventory.item.item.FakeSlotChestWrapper;
+import geni.witherutils.common.world.level.block.controller.SlotControllerBlockEntity;
 import geni.witherutils.common.world.level.block.rack.controller.fluid.ControllerFluidBlockEntity;
 import geni.witherutils.common.world.level.block.rack.controller.fluid.ControllerFluidBlockItemHandlerCapability;
 import geni.witherutils.common.world.level.block.rack.controller.item.ControllerItemBlockEntity;
 import geni.witherutils.common.world.level.block.rack.controller.item.ControllerItemBlockItemHandlerCapability;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.ComponentItemHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.Optional;
@@ -136,6 +140,25 @@ public class WUTCapabilities {
     
     public static void registerBlockCapabilities(RegisterCapabilitiesEvent event)
     {
+        event.registerBlock(Capabilities.ItemHandler.BLOCK,
+                (level, pos, state, blockEntity, context) -> {
+                    // Prüfen, ob dein Slot-Controller anliegt und auf die Kiste zeigt
+                    if (hasActiveSlotController(level, pos)) {
+                        if (blockEntity instanceof ChestBlockEntity chestBE) {
+                            // WICHTIG: Verwende InvWrapper statt level.getCapability,
+                            // um eine StackOverflow-Endlosschleife zu verhindern!
+                            IItemHandler realHandler = new net.neoforged.neoforge.items.wrapper.InvWrapper(chestBE);
+
+                            // Gib hier deinen Wrapper zurück, der z.B. Slot 0 blockiert oder umleitet
+                            return new FakeSlotChestWrapper(realHandler);
+                        }
+                    }
+                    // Wenn kein Controller da ist, gib null zurück -> normales Vanilla-Verhalten
+                    return null;
+                },
+                Blocks.CHEST, Blocks.TRAPPED_CHEST
+        );
+
         WUTBlockEntities.streamBlockEntities().forEach(blockEntity -> {
             if (blockEntity instanceof WitherBlockEntity wbe)
             {
@@ -156,5 +179,21 @@ public class WUTCapabilities {
                 }
             }
         });
+    }
+
+    private static boolean hasActiveSlotController(Level level, BlockPos chestPos) {
+        for (Direction facing : Direction.values()) {
+            BlockPos neighborPos = chestPos.relative(facing);
+            if (level.getBlockState(neighborPos).is(WUTBlocks.SLOT_CONTROLLER.get())) {
+                BlockEntity be = level.getBlockEntity(neighborPos);
+                if (be instanceof SlotControllerBlockEntity controller) {
+                    // Prüft, ob der Controller auch exakt auf diese Kistenposition gerichtet ist
+                    if (controller.getTargetPos().equals(chestPos)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

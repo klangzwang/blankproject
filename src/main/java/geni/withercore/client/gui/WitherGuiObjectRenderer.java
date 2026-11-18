@@ -80,7 +80,7 @@ public class WitherGuiObjectRenderer {
         pose.translate(0, floatOffset, 150);
 
         // Maßstab des 3D-Objekts
-        float scale = 196.0f;
+        float scale = 48.0f;
         pose.scale(scale, -scale, scale);
 
         // Rotation mit der Maus (begrenzt auf max. +/- 45 Grad Neigung)

@@ -1,0 +1,1 @@
+// Beschreibt ein Entity-Attribut.
